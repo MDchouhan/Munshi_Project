@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,8 +36,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.AccountBox
 
 
-
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +47,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+
 
 @Composable
 fun AppNavigator() {
@@ -72,9 +70,14 @@ fun AppNavigator() {
             onLoginClick = { currentScreen.value = "studentHome" }
         )
         "messAdminHome" -> MessAdminHomeScreen(
+            currentScreen = currentScreen.value,
             onEditMenuClick = { currentScreen.value = "menuScreen" },
             onClosingListClick = { currentScreen.value = "closingListScreen" },
-            onEditMealClick = { currentScreen.value = "editMealScreen" }
+            onEditMealClick = { currentScreen.value = "editMealScreen" },
+            onHomeClick = { currentScreen.value = "messAdminHome" },
+            onMenuClick = { currentScreen.value = "menuScreen" },
+            onMealClick = { currentScreen.value = "mealScreen" },
+            onBalanceClick = { currentScreen.value = "balanceScreen" }
         )
         "studentHome" -> StudentHomeScreen(
             onMakePlateClick = { currentScreen.value = "makePlate" },
@@ -121,7 +124,6 @@ fun AppNavigator() {
 }
 
 
-
 @Composable
 fun MainScreen(
     onNavigateToRegisterMessAdmin: () -> Unit,
@@ -138,20 +140,33 @@ fun MainScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            OptionButton(text = "Register as Mess Admin") {
+            OptionButtonMenu(text = "Register as Mess Admin") {
                 onNavigateToRegisterMessAdmin()
             }
             Spacer(modifier = Modifier.height(16.dp))
-            OptionButton(text = "Register as Student") {
+            OptionButtonMenu(text = "Register as Student") {
                 onNavigateToRegisterStudent()
             }
             Spacer(modifier = Modifier.height(16.dp))
-            OptionButton(text = "Log In") {
+            OptionButtonMenu(text = "Log In") {
                 onNavigateToLogin()
             }
         }
     }
 }
+
+@Composable
+fun OptionButtonMenu(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        Text(text = text, color = Color.White)
+    }
+}
+
 
 @Composable
 fun OptionButton(text: String, onClick: () -> Unit) {
@@ -176,6 +191,7 @@ fun OptionButton(text: String, onClick: () -> Unit) {
         }
     }
 }
+
 
 @Composable
 fun RegisterMessAdminScreen(onRegisterClick: () -> Unit) {
@@ -202,6 +218,8 @@ fun RegisterMessAdminScreen(onRegisterClick: () -> Unit) {
         }
     }
 }
+
+
 
 @Composable
 fun RegisterStudentScreen(onRegisterClick: () -> Unit) {
@@ -313,6 +331,8 @@ fun RegisterForm(isStudent: Boolean, onRegisterClick: () -> Unit = {}) {
     }
 }
 
+
+
 @Composable
 fun LoginScreen(onLoginClick: () -> Unit) {
     Box(
@@ -372,13 +392,26 @@ fun LoginForm(onLoginClick: () -> Unit) {
 
 @Composable
 fun MessAdminHomeScreen(
+    currentScreen: String,
     onEditMenuClick: () -> Unit,
     onClosingListClick: () -> Unit,
-    onEditMealClick: () -> Unit
+    onEditMealClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onMenuClick: () -> Unit,
+    onMealClick: () -> Unit,
+    onBalanceClick: () -> Unit
 ) {
     Scaffold(
         topBar = { CustomTopAppBar(title = "Munshi") },
-        bottomBar = { AdminBottomNavigationBar() }
+        bottomBar = {
+            AdminBottomNavigationBar(
+                currentScreen = currentScreen,  // Pass the string value directly
+                onHomeClick = onHomeClick,
+                onMenuClick = onMenuClick,
+                onMealClick = onMealClick,
+                onBalanceClick = onBalanceClick
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -388,12 +421,12 @@ fun MessAdminHomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Button(onClick = { onClosingListClick() }) {
-                Text("Closing List")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { onEditMenuClick() }) {
                 Text("Edit Menu")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { onClosingListClick() }) {
+                Text("Closing List")
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { onEditMealClick() }) {
@@ -403,67 +436,55 @@ fun MessAdminHomeScreen(
     }
 }
 
-
 @Composable
-fun MenuScreen() {
-    val currentDay = remember { mutableStateOf("Today") } // Replace with actual current day logic
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(Color(0xFFFFA500)) // Orange background
+fun AdminBottomNavigationBar(
+    currentScreen: String,  // Use String type here
+    onHomeClick: () -> Unit,
+    onMenuClick: () -> Unit,
+    onMealClick: () -> Unit,
+    onBalanceClick: () -> Unit
+) {
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = Color.Black
     ) {
-        Text(
-            text = currentDay.value,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Blue,
-            modifier = Modifier.padding(bottom = 16.dp)
+        val items = listOf("Home", "Menu", "Meal", "Balance")
+        val icons = listOf(
+            Icons.Default.Home,
+            Icons.Default.List,
+            Icons.Default.Star,
+            Icons.Default.AccountBox
         )
 
-        MealRow(mealType = "Breakfast")
-        MealRow(mealType = "Lunch")
-        MealRow(mealType = "Dinner")
-    }
-}
+        val selectedItemIndex = when (currentScreen) {
+            "messAdminHome" -> 0
+            "menuScreen" -> 1
+            "mealScreen" -> 2
+            "balanceScreen" -> 3
+            else -> -1 // Default to no item selected
+        }
 
-@Composable
-fun MealRow(mealType: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(Color.White, shape = RoundedCornerShape(8.dp))
-            .padding(16.dp)
-    ) {
-        Text(
-            text = mealType,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column { Text("Vegetable"); Text("Value") }
-            Column { Text("DAAL"); Text("Value") }
-            Column { Text("Dessert"); Text("Value") }
+        items.forEachIndexed { index, item ->
+            BottomNavigationItem(
+                icon = { Icon(icons[index], contentDescription = item) },
+                label = { Text(item) },
+                selected = selectedItemIndex == index,
+                onClick = {
+                    when (index) {
+                        0 -> onHomeClick()
+                        1 -> onMenuClick()
+                        2 -> onMealClick()
+                        3 -> onBalanceClick()
+                    }
+                }
+            )
         }
     }
 }
 
-//data class ClosingListItem(
-//    val name: String,
-//    val rollNo: String,
-//    val roomNo: String,
-//    val hostelName: String,
-//    val closedMeal: String,
-//    val amount: Double
-//)
+
+
+
 
 @Composable
 fun ClosingListScreen() {
@@ -711,6 +732,10 @@ fun StudentHomeScreen(
 }
 
 
+
+
+
+
 @Composable
 fun StudentBottomNavigationBar(
     onHomeClick: () -> Unit,
@@ -935,44 +960,44 @@ fun MakePlateScreenPreview() {
 
 
 
-
-@Composable
-fun MealBookingRow(mealType: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(Color.White, shape = RoundedCornerShape(8.dp))
-            .padding(16.dp)
-    ) {
-        Text(
-            text = mealType,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column { Text("Vegetable"); Text("Value") }
-            Column { Text("DAAL"); Text("Value") }
-            Column { Text("Dessert"); Text("Value") }
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            ) {
-                Checkbox(
-                    checked = false,
-                    onCheckedChange = { /* Handle checkbox change */ }
-                )
-            }
-        }
-    }
-}
+//
+//@Composable
+//fun MealBookingRow(mealType: String) {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 8.dp)
+//            .background(Color.White, shape = RoundedCornerShape(8.dp))
+//            .padding(16.dp)
+//    ) {
+//        Text(
+//            text = mealType,
+//            fontSize = 20.sp,
+//            fontWeight = FontWeight.Bold,
+//            color = Color.Black,
+//            modifier = Modifier.padding(bottom = 8.dp)
+//        )
+//
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Column { Text("Vegetable"); Text("Value") }
+//            Column { Text("DAAL"); Text("Value") }
+//            Column { Text("Dessert"); Text("Value") }
+//            Column(
+//                horizontalAlignment = Alignment.End,
+//                verticalArrangement = Arrangement.Center,
+//                modifier = Modifier.align(Alignment.CenterVertically)
+//            ) {
+//                Checkbox(
+//                    checked = false,
+//                    onCheckedChange = { /* Handle checkbox change */ }
+//                )
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun CloseMealScreen(
@@ -1024,51 +1049,63 @@ fun CloseMealScreen(
     }
 }
 
+//
+//@Composable
+//fun MealClosingRow(mealType: String) {
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 8.dp)
+//            .background(Color.White, shape = RoundedCornerShape(8.dp))
+//            .padding(16.dp)
+//    ) {
+//        Text(
+//            text = mealType,
+//            fontSize = 20.sp,
+//            fontWeight = FontWeight.Bold,
+//            color = Color.Black,
+//            modifier = Modifier.padding(bottom = 8.dp)
+//        )
+//
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceBetween
+//        ) {
+//            Column { Text("Vegetable"); Text("Value") }
+//            Column { Text("DAAL"); Text("Value") }
+//            Column { Text("Dessert"); Text("Value") }
+//            Column(
+//                horizontalAlignment = Alignment.End,
+//                verticalArrangement = Arrangement.Center,
+//                modifier = Modifier.align(Alignment.CenterVertically)
+//            ) {
+//                Checkbox(
+//                    checked = false,
+//                    onCheckedChange = { /* Handle checkbox change */ }
+//                )
+//            }
+//        }
+//    }
+//}
+//
 
-@Composable
-fun MealClosingRow(mealType: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(Color.White, shape = RoundedCornerShape(8.dp))
-            .padding(16.dp)
-    ) {
-        Text(
-            text = mealType,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column { Text("Vegetable"); Text("Value") }
-            Column { Text("DAAL"); Text("Value") }
-            Column { Text("Dessert"); Text("Value") }
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            ) {
-                Checkbox(
-                    checked = false,
-                    onCheckedChange = { /* Handle checkbox change */ }
-                )
-            }
-        }
-    }
-}
-
-
-
-@Composable
-fun AdminBottomNavigationBar() {
-    BottomNavigationBar()
-}
+//@Composable
+//fun AdminBottomNavigationBar(
+//    currentScreen: String,
+//    onHomeClick: () -> Unit,
+//    onMenuClick: () -> Unit,
+//    onMealClick: () -> Unit,
+//    onBalanceClick: () -> Unit
+//) {
+//    BottomNavigationBar(
+//        currentScreen = currentScreen,
+//        onHomeClick = onHomeClick,
+//        onMenuClick = onMenuClick,
+//        onMealClick = onMealClick,
+//        onBalanceClick = onBalanceClick
+//    )
+//}
 
 
 //@Composable
@@ -1107,36 +1144,82 @@ fun AdminBottomNavigationBar() {
 
 
 
-
 @Composable
-fun BottomNavigationBar() {
-    NavigationBar {
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-            label = { Text("HOME") },
-            selected = true,
-            onClick = { /* Handle Home click */ }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.Menu, contentDescription = "Menu") },
-            label = { Text("MENU") },
-            selected = false,
-            onClick = { /* Handle Menu click */ }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.Info, contentDescription = "Meal") },
-            label = { Text("MEAL") },
-            selected = false,
-            onClick = { /* Handle Meal click */ }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = "Balance") },
-            label = { Text("BALANCE") },
-            selected = false,
-            onClick = { /* Handle Balance click */ }
-        )
+fun BottomNavigationBar(
+    currentScreen: String,
+    onHomeClick: () -> Unit,
+    onMenuClick: () -> Unit,
+    onMealClick: () -> Unit,
+    onBalanceClick: () -> Unit
+) {
+    val items = listOf("Home", "Menu", "Meal", "Balance")
+    val icons = listOf(
+        Icons.Filled.Home,
+        Icons.Filled.Menu,
+        Icons.Filled.Info,
+        Icons.Filled.ShoppingCart
+    )
+
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = Color.Black
+    ) {
+        items.forEachIndexed { index, item ->
+            BottomNavigationItem(
+                icon = { Icon(icons[index], contentDescription = item) },
+                label = { Text(item) },
+                selected = when (item) {
+                    "Home" -> currentScreen == "home"
+                    "Menu" -> currentScreen == "menu"
+                    "Meal" -> currentScreen == "meal"
+                    "Balance" -> currentScreen == "balance"
+                    else -> false
+                },
+                onClick = {
+                    when (item) {
+                        "Home" -> onHomeClick()
+                        "Menu" -> onMenuClick()
+                        "Meal" -> onMealClick()
+                        "Balance" -> onBalanceClick()
+                    }
+                }
+            )
+        }
     }
 }
+
+
+//@Composable
+//fun BottomNavigationBar() {
+//    NavigationBar {
+//        NavigationBarItem(
+//            icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+//            label = { Text("HOME") },
+//            selected = true,
+//            onClick = { /* Handle Home click */ }
+//        )
+//        NavigationBarItem(
+//            icon = { Icon(Icons.Filled.Menu, contentDescription = "Menu") },
+//            label = { Text("MENU") },
+//            selected = false,
+//            onClick = { /* Handle Menu click */ }
+//        )
+//        NavigationBarItem(
+//            icon = { Icon(Icons.Filled.Info, contentDescription = "Meal") },
+//            label = { Text("MEAL") },
+//            selected = false,
+//            onClick = { /* Handle Meal click */ }
+//        )
+//        NavigationBarItem(
+//            icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = "Balance") },
+//            label = { Text("BALANCE") },
+//            selected = false,
+//            onClick = { /* Handle Balance click */ }
+//        )
+//    }
+//}
+
+
 
 // Define a custom typography style similar to subtitle1
 val CustomSubtitle1 = androidx.compose.ui.text.TextStyle(
@@ -1144,6 +1227,8 @@ val CustomSubtitle1 = androidx.compose.ui.text.TextStyle(
     fontWeight = FontWeight.Normal,
     color = Color.Black // Adjust color as needed
 )
+
+
 
 @Composable
 fun CustomTopAppBar(title: String) {
