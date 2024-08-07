@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFA500"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/studentUI"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Student UI"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp" />
+
+    <TextView
+        android:id="@+id/studentID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/studentUI"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="ID:22109093"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/mealPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="<Meal page<"
+        android:layout_below="@id/studentID"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/breakfastButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mealPage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="118dp"
+        android:layout_marginEnd="32dp"
+        android:background="#808080"
+        android:onClick="onBreakfastClick"
+        android:text="Make plate" />
+
+    <Button
+        android:id="@+id/lunchButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/breakfastButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="32dp"
+        android:background="#808080"
+        android:onClick="onLunchClick"
+        android:text="Close Meal" />
+
+
+</RelativeLayout>
