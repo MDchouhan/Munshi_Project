@@ -1,0 +1,129 @@
+```xml
+    <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFA500"
+    android:padding="16dp"
+    tools:context=".NewActivity">
+
+    <RelativeLayout
+        android:id="@+id/top_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/actionBarSize"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/text_munshi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="Munshi"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true">
+
+            <ImageView
+                android:id="@+id/btn_notifications"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/baseline_cloud_done_24" />
+
+            <ImageView
+                android:id="@+id/btn_account"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/baseline_cloud_done_24" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/total_student_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="52"
+            android:textSize="24sp"
+            android:textColor="#000000"
+            android:padding="16dp"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btn_edit_student"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Student"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/actionBarSize"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/nav_item1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_cloud_done_24"
+            android:contentDescription="Home" />
+
+        <ImageView
+            android:id="@+id/nav_item2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_cloud_done_24"
+            android:contentDescription="Search" />
+
+        <ImageView
+            android:id="@+id/nav_item3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_cloud_done_24"
+            android:contentDescription="Notifications" />
+
+        <ImageView
+            android:id="@+id/nav_item4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_cloud_done_24"
+            android:contentDescription="Account" />
+    </LinearLayout>
+
+</RelativeLayout>
+    ```
